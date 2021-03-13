@@ -3,6 +3,7 @@
   <arg name="respeaker" default="true" />
   <arg name="logging" default="true" />
   <arg name="twitter" default="true" />
+  <arg name="influxdb" default="true" />
   <arg name="debug" default="false" />
   <arg name="home_dir" default="$(env HOME)" />
   <arg name="mask_rcnn" default="false" />
@@ -13,6 +14,11 @@
   <arg name="spherical_stereo" default="true" />
   <arg name="lgripper_type" default="softhand" />
   <arg name="rgripper_type" default="softhand" />
+
+  <!-- baxter control -->
+  <arg name="arm_interpolation" default="bezier_with_velocity" />
+  <arg name="arm_control_mode" default="velocity" />
+  <arg name="moveit" default="false" />
 
   <!-- gripper and display-->
   <arg name="finger" default="standard_narrow" />
@@ -61,15 +67,15 @@
     <arg name="load_robot_description" value="false" />
     <arg name="launch_robot_state_publisher" value="true" />
     <arg name="sanity_check_joint_trajectory" value="false" />
-    <arg name="launch_moveit" value="false" />
+    <arg name="launch_moveit" value="$(arg moveit)" />
     <arg name="launch_time_signal" value="false" />
     <arg name="launch_db" value="false"/>
     <arg name="launch_twitter" value="false"/>
     <arg name="launch_gripper_action" value="true" />
     <arg name="left_electric_gripper" value="true" />
     <arg name="right_electric_gripper" value="true" />
-    <arg name="arm_interpolation" value="bezier_with_velocity" />
-    <arg name="arm_control_mode" value="velocity" />
+    <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
   </include>
 
   <!-- launch softhands -->
@@ -119,7 +125,7 @@
         <arg name="load_machinepath" value="true" />
         <arg name="machinepath" value="$(find eus_vive)/launch/baxter/baxter.machine" />
       </include>
-      <!-- launch elp left camera on c4 -->
+      <!-- launch elp right camera on c4 -->
       <node name="elp_right_transform_publisher" pkg="tf" type="static_transform_publisher"
             args="0.05 0.05 0.1 -1.5 -0.6 0.0 head_camera $(arg spherical_right_camera_ns)_link 100" />
       <node name="elp_right_optical_frame_transform_publisher" pkg="tf" type="static_transform_publisher"
@@ -217,6 +223,7 @@
   <!-- launch logging -->
   <include file="$(find eus_vive)/launch/baxter/baxter_logging.launch" if="$(arg logging)">
     <arg name="twitter" value="$(arg twitter)" />
+    <arg name="influxdb" value="$(arg influxdb)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="camera" value="$(arg realsense_camera)" />
     <arg name="camera_ns" value="$(arg camera_ns)" />
